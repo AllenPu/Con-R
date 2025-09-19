@@ -200,7 +200,7 @@ def main():
         #assert args.resume, 'Specify a trained model using [args.resume]'
         #checkpoint = torch.load(args.resume)
         model_names = ''
-        checkpoint = torch.load(f'/home/rpu2/scratch/code/Con-R/agedb-dir/checkpoint/{model_names}}')
+        checkpoint = torch.load(f'/home/rpu2/scratch/code/Con-R/agedb-dir/checkpoint/{model_names}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
         print(f"===> Checkpoint '{args.resume}' loaded (epoch [{checkpoint['epoch']}]), testing...")
         validate(test_loader, model, train_labels=train_labels, prefix='Test')
