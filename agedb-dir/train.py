@@ -36,7 +36,7 @@ import os
 import csv
 
 os.environ["KMP_WARNINGS"] = "FALSE"
-
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 # imbalanced related
@@ -189,7 +189,8 @@ def main():
                      kernel=args.fds_kernel, ks=args.fds_ks, sigma=args.fds_sigma, momentum=args.fds_mmt,
                      return_features=(args.regularization_weight > 0))
     
-    model = torch.nn.DataParallel(model).cuda()
+    #model = torch.nn.DataParallel(model).cuda()
+    model = model.to(device)
     count=0
     
     
