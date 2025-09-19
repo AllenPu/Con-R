@@ -28,7 +28,7 @@ from torch.utils.data import DataLoader
 from loss import *
 from utils import *
 from datasets import AgeDB
-from resnet import resnet50
+from resnet import resnet50, resnet18
 
 from ranksim import batchwise_ranking_regularizer
 
@@ -197,11 +197,16 @@ def main():
 
     # evaluate only
     if args.evaluate:
-        assert args.resume, 'Specify a trained model using [args.resume]'
-        checkpoint = torch.load(args.resume)
+        #assert args.resume, 'Specify a trained model using [args.resume]'
+        #checkpoint = torch.load(args.resume)
+        model_names = ''
+        checkpoint = torch.load(f'/home/rpu2/scratch/code/Con-R/agedb-dir/checkpoint/{model_names}}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
         print(f"===> Checkpoint '{args.resume}' loaded (epoch [{checkpoint['epoch']}]), testing...")
         validate(test_loader, model, train_labels=train_labels, prefix='Test')
+        #
+        cal_MAE_and_Frobs(model, train_loader, test_loader)
+        #
         return
 
     if args.retrain_fc:
