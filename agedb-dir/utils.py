@@ -349,7 +349,7 @@ def cal_MAE_and_Frobs(model_regression, train_loader, test_loader):
     })
 
 
-    df_train.to_csv("ranksim_train.csv", index=False)
-    df_test.to_csv("ranksim_test.csv", index=False)
+    df_train.to_csv("Con-R_train.csv", index=False)
+    df_test.to_csv("Con-R_test.csv", index=False)
 
     return
