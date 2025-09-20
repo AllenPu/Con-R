@@ -34,7 +34,7 @@ import matplotlib
 
 
 
-
+device =  'cuda' if torch.cuda.is_available() else 'cpu'
     
         
 
@@ -251,11 +251,15 @@ def per_label_frobenius_norm(features, labels):
 
 
 #####################################
-def cal_per_label_Frob(model, train_loader):
+def cal_per_label_Frob(model, train_loader,  marker):
     model.eval()
     feature, label = [], []
     with torch.no_grad():
-        for idx, (x, y, _) in enumerate(train_loader):
+        for idx, batch in enumerate(train_loader):
+            if marker == 'train':
+                x, _, y, _ = batch
+            else:
+                x, y = batch
             x = x.to(device)
             _, z_pred = model(x)
             feature.append(z_pred.cpu())
@@ -268,7 +272,7 @@ def cal_per_label_Frob(model, train_loader):
 
 
 #####################################
-def cal_per_label_mae(model, train_loader):
+def cal_per_label_mae(model, train_loader, marker):
     """
     #output: Tensor of shape (N, 1)
     #target: Tensor of shape (N,) with M unique labels
@@ -276,8 +280,11 @@ def cal_per_label_mae(model, train_loader):
     """
     output, target = [], []
     with torch.no_grad():
-        for idx, (x, y, _) in enumerate(train_loader):
-            x = x.to(device)
+        for idx, batch in enumerate(train_loader):
+            if marker == 'train':
+                x, _, y, _ = batch
+            else:
+                x, y = batch
             y_pred, _ = model(x)
             #print('========================!!!!!!========',y_pred)
             target.extend(y.squeeze(-1).tolist())
@@ -305,14 +312,14 @@ def cal_per_label_mae(model, train_loader):
 
 
 def cal_MAE_and_Frobs(model_regression, train_loader, test_loader):
-    per_label_MAE_train = cal_per_label_mae(model_regression, train_loader)
+    per_label_MAE_train = cal_per_label_mae(model_regression, train_loader, marker = 'train')
     print('===============train key MAE============='+'\n')
     k_train = [k for k in per_label_MAE_train.keys()]
     print(f'k_train is {k_train}')
     v_train = [per_label_MAE_train[k] for k in per_label_MAE_train.keys()]
     print(f'v_train is {v_train}')
     print('===============train MAE============='+'\n')
-    per_label_MAE_test = cal_per_label_mae(model_regression, test_loader)
+    per_label_MAE_test = cal_per_label_mae(model_regression, test_loader, marker = 'test')
     print('===============test key MAE============='+'\n')
     k_test = [k for k in per_label_MAE_test.keys()]
     print(f'k_test is {k_test}')
@@ -320,8 +327,8 @@ def cal_MAE_and_Frobs(model_regression, train_loader, test_loader):
     print(f'v_test is {v_test}')
     print('===============test MAE============='+'\n')
     #
-    per_label_Frobs_train = cal_per_label_Frob(model_regression, train_loader)
-    per_label_Frobs_test = cal_per_label_Frob(model_regression, test_loader)
+    per_label_Frobs_train = cal_per_label_Frob(model_regression, train_loader, marker = 'train')
+    per_label_Frobs_test = cal_per_label_Frob(model_regression, test_loader, marker = 'test')
     k_frobs_train = [k for k in per_label_Frobs_train.keys()]
     k_frobs_test = [k for k in per_label_Frobs_test.keys()]
     v_frobs_train = [per_label_Frobs_train[k] for k in per_label_Frobs_train.keys()]
