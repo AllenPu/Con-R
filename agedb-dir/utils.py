@@ -285,6 +285,7 @@ def cal_per_label_mae(model, train_loader, marker):
                 x, _, y, _ = batch
             else:
                 x, y = batch
+            x, y = x.to(device), y.to(device)
             y_pred, _ = model(x)
             #print('========================!!!!!!========',y_pred)
             target.extend(y.squeeze(-1).tolist())
